@@ -1,5 +1,5 @@
-from matplotlib import pyplot as plt
 import numpy as np
+from matplotlib import pyplot as plt
 import math
 
 k = 2
@@ -24,11 +24,15 @@ prev_step = []
 prev_lost = []
 
 
+def my_sign(x):
+    return int(math.copysign(1, x))
+
+
 def alfa_star(alfa):
-    if alfa <= Amax:
+    if abs(alfa) <= Amax:
         return alfa
     else:
-        return Amax * np.sign(alfa)
+        return Amax * my_sign(alfa)
 
 
 def system(vector):
@@ -37,9 +41,10 @@ def system(vector):
     F[0] = k * alfa_star(alfa)
     F[1] = vector[2]
     F[2] = l * vector[0] - l * vector[1] - m * vector[2] + n * vector[3]
-    F[3] = -k1 * vector[3] - i1 * vector[1] - i2 * vector[2] + s * (10000 - vector[4])
-    F[4] = b - V * np.sin(vector[0])
-    theta = 10000 - vector[4]
+    theta = (10000 - vector[4]) / (b - V * T)
+    F[3] = -k1 * vector[3] - i1 * vector[1] - i2 * vector[2] + s * (theta - vector[0])
+    F[4] = V * np.sin(vector[0])
+
     return F
 
 
@@ -93,8 +98,7 @@ def dynamic_step():
     while curr_step_size > 0:
         R1 = Euler(np.array([x1, x2, x3, x4, x5]), curr_step_size, T)
         R2 = Euler(np.array([x1, x2, x3, x4, x5]), curr_step_size / 2, T)
-        sigma = abs((R2[-1][0] - R1[-1][0]) / R2[-1][0]) * 100
-        print(f'Размер шага {round(curr_step_size, 6)} потери {round(sigma, 3)}%')
+        sigma = abs((R2[-1][4] - R1[-1][4]) / R2[-1][4]) * 100  # Error estimation relative to x5
         prev_step.append(curr_step_size)
         prev_lost.append(sigma)
         if sigma < 1:
