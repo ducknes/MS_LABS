@@ -6,7 +6,7 @@ k = 2
 l = 8
 m = 2
 n = 10
-k1 = 100
+kt = 100
 b = 26000
 i1 = 9
 i2 = 2
@@ -37,12 +37,13 @@ def alfa_star(alfa):
 
 def system(vector):
     F = np.zeros(5)
+    t = T
     alfa = vector[1] - vector[0]
     F[0] = k * alfa_star(alfa)
     F[1] = vector[2]
     F[2] = l * vector[0] - l * vector[1] - m * vector[2] + n * vector[3]
-    theta = (10000 - vector[4]) / (b - V * T)
-    F[3] = -k1 * vector[3] - i1 * vector[1] - i2 * vector[2] + s * (theta - vector[0])
+    theta = (10000 - vector[4]) / (b - V * t)
+    F[3] = -kt * vector[3] - i1 * vector[1] - i2 * vector[2] + s * (theta - vector[0])
     F[4] = V * np.sin(vector[0])
 
     return F
@@ -93,7 +94,7 @@ def fixed_step():
 
 
 def dynamic_step():
-    curr_step_size = 1
+    curr_step_size = 4
     first_step_size = curr_step_size
     while curr_step_size > 0:
         R1 = Euler(np.array([x1, x2, x3, x4, x5]), curr_step_size, T)
@@ -103,7 +104,7 @@ def dynamic_step():
         prev_lost.append(sigma)
         if sigma < 1:
             break
-        curr_step_size -= 0.01
+        curr_step_size -= 0.001
 
     fig, ax = plt.subplots()
     ax.plot(prev_step, prev_lost)
@@ -111,7 +112,7 @@ def dynamic_step():
     plt.ylabel('Погрешность, %')
     ax.set_xlim(first_step_size, curr_step_size)
     plt.show()
-    print(f"Итоговый размер шага: {round(prev_step[-1], 3)}")
+    print(f"Итоговый размер шага: {round(prev_step[-1], 5)}")
 
 
 if __name__ == '__main__':
