@@ -34,12 +34,12 @@ var transitionTable = [][]int{
 	{StateC, StateC, StateC, StateB, StateB, StateA, StateA, StateA, StateA, StateA, StateA, StateA},
 }
 
-// Таблица выходов автомата
-var outputTable = []bool{
-	false,
-	true,
-	false,
-}
+// // Таблица выходов автомата
+// var outputTable = []bool{
+// 	false,
+// 	true,
+// 	false,
+// }
 
 func main() {
 	// Печатаем заголовок таблицы
@@ -73,20 +73,20 @@ func main() {
 	}
 
 	// Печатаем таблицу выходов
-	fmt.Println("Выходы:")
-	for state, output := range outputTable {
-		switch state {
-		case StateA:
-			fmt.Printf("%s: ", "A")
-		case StateB:
-			fmt.Printf("%s: ", "B")
-		case StateC:
-			fmt.Printf("%s: ", "C")
-		}
-		if output {
-			fmt.Println("1")
-		} else {
-			fmt.Println("0")
-		}
-	}
+	// fmt.Println("Выходы:")
+	// for state, output := range outputTable {
+	// 	switch state {
+	// 	case StateA:
+	// 		fmt.Printf("%s: ", "A")
+	// 	case StateB:
+	// 		fmt.Printf("%s: ", "B")
+	// 	case StateC:
+	// 		fmt.Printf("%s: ", "C")
+	// 	}
+	// 	if output {
+	// 		fmt.Println("1")
+	// 	} else {
+	// 		fmt.Println("0")
+	// 	}
+	// }
 }
