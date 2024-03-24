@@ -64,7 +64,7 @@ func main() {
 	outputSignals := make([]int, p)
 
 	// Моделирование работы автомата
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < 10; i++ {
 		// Генерация входного символа
 		x := rand.Intn(m)
 
@@ -92,4 +92,3 @@ func main() {
 		fmt.Printf("y%d:\t%d\t%.2f%%\n", i, outputSignals[i], float64(outputSignals[i])/1000*100)
 	}
 }
-
