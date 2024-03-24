@@ -1,20 +1,23 @@
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
 
-// Состояния автомата
+// Статусы автомата
 const (
-	StateA = iota
-	StateB
-	StateC
+	StatusA = iota
+	StatusB
+	StatusC
+	StatusD
+	StatusE
+	StatusF
+	StatusG
+	StatusH
+	StatusI
 )
 
 // Входы автомата
 const (
-	Input0 = 1 << iota
-	Input1
+	Input1 = 1 + iota
 	Input2
 	Input3
 	Input4
@@ -25,68 +28,40 @@ const (
 	Input9
 	Input10
 	Input11
+	Input12
 )
 
 // Таблица переходов автомата
-var transitionTable = [][]int{
-	{StateB, StateA, StateA, StateA, StateA, StateA, StateA, StateA, StateA, StateA, StateA, StateA},
-	{StateC, StateC, StateB, StateB, StateA, StateA, StateA, StateA, StateA, StateA, StateA, StateA},
-	{StateC, StateC, StateC, StateB, StateB, StateA, StateA, StateA, StateA, StateA, StateA, StateA},
+var table = [9][12]func(int) int{
+	{func(int) int { return StatusB }, func(int) int { return StatusC }, func(int) int { return StatusA }, func(int) int { return StatusD }, func(int) int { return StatusE }, func(int) int { return StatusA }, func(int) int { return StatusF }, func(int) int { return StatusA }, func(int) int { return StatusG }, func(int) int { return StatusA }, func(int) int { return StatusH }, func(int) int { return StatusA }}, // StatusA
+	{func(int) int { return StatusA }, func(int) int { return StatusB }, func(int) int { return StatusA }, func(int) int { return StatusA }, func(int) int { return StatusA }, func(int) int { return StatusC }, func(int) int { return StatusA }, func(int) int { return StatusD }, func(int) int { return StatusA }, func(int) int { return StatusE }, func(int) int { return StatusA }, func(int) int { return StatusF }}, // StatusB
+	{func(int) int { return StatusA }, func(int) int { return StatusA }, func(int) int { return StatusB }, func(int) int { return StatusC }, func(int) int { return StatusD }, func(int) int { return StatusA }, func(int) int { return StatusE }, func(int) int { return StatusA }, func(int) int { return StatusF }, func(int) int { return StatusA }, func(int) int { return StatusG }, func(int) int { return StatusA }}, // StatusC
+	{func(int) int { return StatusA }, func(int) int { return StatusB }, func(int) int { return StatusC }, func(int) int { return StatusD }, func(int) int { return StatusA }, func(int) int { return StatusE }, func(int) int { return StatusA }, func(int) int { return StatusF }, func(int) int { return StatusA }, func(int) int { return StatusG }, func(int) int { return StatusA }, func(int) int { return StatusH }}, // StatusD
+	{func(int) int { return StatusA }, func(int) int { return StatusB }, func(int) int { return StatusC }, func(int) int { return StatusD }, func(int) int { return StatusE }, func(int) int { return StatusA }, func(int) int { return StatusF }, func(int) int { return StatusA }, func(int) int { return StatusG }, func(int) int { return StatusA }, func(int) int { return StatusH }, func(int) int { return StatusA }}, // StatusE
+	{func(int) int { return StatusA }, func(int) int { return StatusB }, func(int) int { return StatusC }, func(int) int { return StatusD }, func(int) int { return StatusE }, func(int) int { return StatusF }, func(int) int { return StatusA }, func(int) int { return StatusG }, func(int) int { return StatusA }, func(int) int { return StatusH }, func(int) int { return StatusA }, func(int) int { return StatusI }}, // StatusF
+	{func(int) int { return StatusA }, func(int) int { return StatusB }, func(int) int { return StatusC }, func(int) int { return StatusD }, func(int) int { return StatusE }, func(int) int { return StatusF }, func(int) int { return StatusG }, func(int) int { return StatusA }, func(int) int { return StatusH }, func(int) int { return StatusA }, func(int) int { return StatusI }, func(int) int { return StatusA }}, // StatusG
+	{func(int) int { return StatusA }, func(int) int { return StatusB }, func(int) int { return StatusC }, func(int) int { return StatusD }, func(int) int { return StatusE }, func(int) int { return StatusF }, func(int) int { return StatusG }, func(int) int { return StatusH }, func(int) int { return StatusA }, func(int) int { return StatusI }, func(int) int { return StatusA }, func(int) int { return StatusA }}, // StatusH
+	{func(int) int { return StatusA }, func(int) int { return StatusB }, func(int) int { return StatusC }, func(int) int { return StatusD }, func(int) int { return StatusE }, func(int) int { return StatusF }, func(int) int { return StatusG }, func(int) int { return StatusH }, func(int) int { return StatusI }, func(int) int { return StatusA }, func(int) int { return StatusA }, func(int) int { return StatusA }}, // StatusI
 }
 
-// // Таблица выходов автомата
-// var outputTable = []bool{
-// 	false,
-// 	true,
-// 	false,
-// }
-
-func main() {
-	// Печатаем заголовок таблицы
-	fmt.Printf("%-10s | ", "Состояние")
-	for i := 0; i < 12; i++ {
-		fmt.Printf("%-5d ", i)
-	}
-	fmt.Println()
-
-	// Печатаем таблицу переходов
-	for state, row := range transitionTable {
-		switch state {
-		case StateA:
-			fmt.Printf("%-10s | ", "A")
-		case StateB:
-			fmt.Printf("%-10s | ", "B")
-		case StateC:
-			fmt.Printf("%-10s | ", "C")
-		}
-		for _, nextState := range row {
-			switch nextState {
-			case StateA:
-				fmt.Printf("%-5s ", "A")
-			case StateB:
-				fmt.Printf("%-5s ", "B")
-			case StateC:
-				fmt.Printf("%-5s ", "C")
+func printTable() {
+	fmt.Println("   | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 |")
+	fmt.Println("---+---+---+---+---+---+---+---+---+---+----+----+----+")
+	for i := 0; i < 9; i++ {
+		fmt.Printf("%c  | ", 'A'+i)
+		for j := 0; j < 12; j++ {
+			status := table[i][j](i)
+			if j < 9 {
+				fmt.Printf("%c | ", 'A'+status)
+				continue
 			}
+			fmt.Printf("%c  | ", 'A'+status)
 		}
 		fmt.Println()
+		fmt.Println("---+---+---+---+---+---+---+---+---+---+----+----+----+")
 	}
+}
 
-	// Печатаем таблицу выходов
-	// fmt.Println("Выходы:")
-	// for state, output := range outputTable {
-	// 	switch state {
-	// 	case StateA:
-	// 		fmt.Printf("%s: ", "A")
-	// 	case StateB:
-	// 		fmt.Printf("%s: ", "B")
-	// 	case StateC:
-	// 		fmt.Printf("%s: ", "C")
-	// 	}
-	// 	if output {
-	// 		fmt.Println("1")
-	// 	} else {
-	// 		fmt.Println("0")
-	// 	}
-	// }
+func main() {
+	printTable()
 }
