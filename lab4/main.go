@@ -54,6 +54,9 @@ func getOutputSignal(zNew int, r2 float64) int {
 
 // Главная функция
 func main() {
+	fmt.Println("x\tzOld\tr1\tzNew\tr2\ty")
+	fmt.Println("---\t---\t---\t---\t---\t---")
+
 	// Инициализация генератора случайных чисел
 	rand.New(rand.NewSource(time.Now().UnixNano()))
 
