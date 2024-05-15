@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats as stats
@@ -8,8 +10,13 @@ import scipy.stats as stats
 # F(z) = 1 - e^(-z - 1), 0 <= z <= e - 1
 # F^(-1)(u) = -ln(1 - u) - 1, u ~ U(0, 1)
 def inverse_transform_sampling(n):
-    samples = -np.log(1 - np.random.rand(n)) - 1
-    return samples
+    u = np.random.rand(n)
+    result = []
+    for i in range(n):
+        temp = math.e ** (1 - u[i]) * (math.e ** u[i] - 1)
+        result.append(temp)
+    # samples = -np.log(1 - np.random.rand(n)) - 1
+    return result
 
 
 # Функция для вычисления среднего значения и дисперсии выборки
@@ -24,10 +31,11 @@ def calculate_mean_variance(samples):
 # Функция для вычисления статистики критерия Колмогорова
 # D_n = max(|F_n(x) - F(x)|)
 def calculate_ks_statistic(samples):
-    _, ks_statistic = stats.kstest(samples, 'expon', args=(1,), alternative='two-sided')
+    p, ks_statistic = stats.kstest(samples, 'expon', args=(1,), alternative='two-sided')
+    print(p)
     # Применение критерия Колмогорова из библиотеки scipy.stats.kstest
     # Вычисление статистики критерия Колмогорова
-    return ks_statistic
+    return p, ks_statistic
 
 
 # Функция для построения гистограммы выборки
@@ -49,12 +57,13 @@ sample_sizes = [50, 100, 1000, 10000, 100000]
 for sample_size in sample_sizes:
     smpls = inverse_transform_sampling(sample_size)
     mean, variance = calculate_mean_variance(smpls)
-    ks_statistic = calculate_ks_statistic(smpls)
+    p, ks_statistic = calculate_ks_statistic(smpls)
 
     print(f'Размер выборки: {sample_size}')
-    print(f'Среднее значение: {mean} (ожидаемое: 1 - 1/e)')
-    print(f'Дисперсия: {variance} (ожидаемое: 1 - 2/e)')
+    print(f'Среднее значение: {mean} ')
+    print(f'Дисперсия: {variance}')
     print("Критерий Колмогорова: {:.100f}".format(ks_statistic))
+    print("p: {:.30f}".format(p))
     print()
 
     plot_histogram(smpls)

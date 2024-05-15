@@ -2,51 +2,69 @@ package main
 
 import "math"
 
+// gauss решает систему линейных уравнений методом Гаусса.
 func gauss(matrix [][]float64) []float64 {
-	// Размерность матрицы
+	//n := len(matrix)
+	augmentedMatrix := createAugmentedMatrix(matrix)
+
+	forwardElimination(augmentedMatrix)
+
+	return backSubstitution(augmentedMatrix)
+}
+
+// createAugmentedMatrix создает расширенную матрицу, добавляя столбец свободных членов.
+func createAugmentedMatrix(matrix [][]float64) [][]float64 {
 	n := len(matrix)
-
-	// Добавление столбца свободных членов
+	augmentedMatrix := make([][]float64, n)
 	for i := range matrix {
-		matrix[i] = append(matrix[i], -1)
+		augmentedMatrix[i] = append([]float64(nil), matrix[i]...)
+		augmentedMatrix[i] = append(augmentedMatrix[i], -1) // Добавление столбца свободных членов
 	}
+	return augmentedMatrix
+}
 
-	// Метод Гаусса с выбором главного элемента
+// forwardElimination выполняет прямой ход метода Гаусса.
+func forwardElimination(matrix [][]float64) {
+	n := len(matrix)
 	for k := 0; k < n-1; k++ {
-		maxRow := k
-		maxVal := math.Abs(matrix[k][k])
-
-		for i := k + 1; i < n; i++ {
-			if math.Abs(matrix[i][k]) > maxVal {
-				maxRow = i
-				maxVal = math.Abs(matrix[i][k])
-			}
-		}
-
-		if maxRow != k {
-			matrix[k], matrix[maxRow] = matrix[maxRow], matrix[k]
-		}
-
+		pivot(matrix, k)
 		for i := k + 1; i < n; i++ {
 			coef := matrix[i][k] / matrix[k][k]
-
-			for j := k; j < n+1; j++ {
-				matrix[i][j] = matrix[i][j] - coef*matrix[k][j]
+			for j := k; j <= n; j++ {
+				matrix[i][j] -= coef * matrix[k][j]
 			}
 		}
 	}
+}
 
-	// Вычисление значений a_i
-	a := make([]float64, n)
+// pivot находит и применяет опорный элемент для текущего шага k.
+func pivot(matrix [][]float64, k int) {
+	n := len(matrix)
+	maxRow := k
+	maxVal := math.Abs(matrix[k][k])
+	for i := k + 1; i < n; i++ {
+		if currentVal := math.Abs(matrix[i][k]); currentVal > maxVal {
+			maxRow = i
+			maxVal = currentVal
+		}
+	}
+	if maxRow != k {
+		matrix[k], matrix[maxRow] = matrix[maxRow], matrix[k]
+	}
+}
+
+// backSubstitution выполняет обратный ход метода Гаусса.
+func backSubstitution(matrix [][]float64) []float64 {
+	n := len(matrix)
+	solution := make([]float64, n)
 	for i := n - 1; i >= 0; i-- {
 		sum := 0.0
 		for j := i + 1; j < n; j++ {
-			sum += matrix[i][j] * a[j]
+			sum += matrix[i][j] * solution[j]
 		}
-		a[i] = (matrix[i][n] - sum) / matrix[i][i]
+		solution[i] = (matrix[i][n] - sum) / matrix[i][i]
 	}
-
-	return a
+	return solution
 }
 
 func matrixForGauss(m [][]float64) [][]float64 {
