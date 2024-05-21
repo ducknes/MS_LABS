@@ -11,11 +11,15 @@ import scipy.stats as stats
 # F^(-1)(u) = -ln(1 - u) - 1, u ~ U(0, 1)
 def inverse_transform_sampling(n):
     u = np.random.rand(n)
+    plt.hist(u, bins=30, alpha=0.75)
+    plt.title('Гистограмма случайно сгенерированных чисел')
+    plt.xlabel('Значения')
+    plt.ylabel('Частота')
+    plt.show()
     result = []
     for i in range(n):
         temp = math.e ** (1 - u[i]) * (math.e ** u[i] - 1)
         result.append(temp)
-    # samples = -np.log(1 - np.random.rand(n)) - 1
     return result
 
 
@@ -45,7 +49,7 @@ def plot_histogram(samples, bins=50):
     y = 1 / (np.e - x)
     plt.plot(x, y, 'r', label='Теоретическое распределение')
     plt.xlabel('Значение')
-    plt.ylabel('Плотность')
+    plt.ylabel('Распреление')
     plt.legend()
     plt.show()
 
